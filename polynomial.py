@@ -79,7 +79,7 @@ class Div:
     def evaluate(self, num):
         return self.p1.evaluate(num) / self.p2.evaluate(num)
 
-# Testing the implementation
+
 poly = Add(Add(Int(4), Int(3)), Add(X(), Mul(Int(1), Add(Mul(X(), X()), Int(1)))))
 print(poly)  # Expected output: 4 + 3 + X + 1 * (X * X + 1)
 print(poly.evaluate(-1))  # Expected numerical output for X = -1
