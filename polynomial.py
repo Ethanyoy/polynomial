@@ -1,52 +1,30 @@
 class X:
-    def __init__(self):
-        pass
-
     def __repr__(self):
         return "X"
 
-    def evaluate(self, val):
-        return val
+    def evaluate(self, num):
+        return num
+
 class Int:
     def __init__(self, i):
         self.i = i
-
+    
     def __repr__(self):
         return str(self.i)
 
-     def evaluate(self, val):
+    def evaluate(self, num):
         return self.i
 
 class Add:
     def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
-
+    
     def __repr__(self):
         return repr(self.p1) + " + " + repr(self.p2)
 
-
-class Mul:
-    def __init__(self, p1, p2):
-        self.p1 = p1
-        self.p2 = p2
-
-    def __repr__(self):
-        if isinstance(self.p1, Add):
-            if isinstance(self.p2, Add):
-                return "( " + repr(self.p1) + " ) * ( " + repr(self.p2) + " )"
-            return "( " + repr(self.p1) + " ) * " + repr(self.p2)
-        if isinstance(self.p2, Add):
-            return repr(self.p1) + " * ( " + repr(self.p2) + " )"
-        return repr(self.p1) + " * " + repr(self.p2)
-
-class Div:
-    def __init__(self, p1, p2):
-        self.p1 = p1
-        self.p2 = p2
-
-    def __repr__(self):
-        return f"({repr(self.p1)}) / ({repr(self.p2)})"
+    def evaluate(self, num):
+        return self.p1.evaluate(num) + self.p2.evaluate(num)
 
 class Sub:
     def __init__(self, p1, p2):
@@ -54,24 +32,59 @@ class Sub:
         self.p2 = p2
 
     def __repr__(self):
-        return f"({repr(self.p1)}) - ({repr(self.p2)})"
+        return repr(self.p1) + " - " + repr(self.p2)
 
+    def evaluate(self, num):
+        return self.p1.evaluate(num) - self.p2.evaluate(num)
+
+class Mul:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+    def __repr__(self):
+        if isinstance(self.p1, (Add, Sub)):
+            p1_repr = f"( {repr(self.p1)} )"
+        else:
+            p1_repr = repr(self.p1)
+        
+        if isinstance(self.p2, (Add, Sub)):
+            p2_repr = f"( {repr(self.p2)} )"
+        else:
+            p2_repr = repr(self.p2)
+
+        return f"{p1_repr} * {p2_repr}"
+
+    def evaluate(self, num):
+        return self.p1.evaluate(num) * self.p2.evaluate(num)
+
+class Div:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+    def __repr__(self):
+        if isinstance(self.p1, (Add, Sub)):
+            p1_repr = f"( {repr(self.p1)} )"
+        else:
+            p1_repr = repr(self.p1)
+        
+        if isinstance(self.p2, (Add, Sub)):
+            p2_repr = f"( {repr(self.p2)} )"
+        else:
+            p2_repr = repr(self.p2)
+
+        return f"{p1_repr} / {p2_repr}"
+
+    def evaluate(self, num):
+        return self.p1.evaluate(num) / self.p2.evaluate(num)
+
+# Testing the implementation
 poly = Add(Add(Int(4), Int(3)), Add(X(), Mul(Int(1), Add(Mul(X(), X()), Int(1)))))
-print(poly)
+print(poly)  # Expected output: 4 + 3 + X + 1 * (X * X + 1)
+print(poly.evaluate(-1))  # Expected numerical output for X = -1
 
-print(Sub(Int(5), Int(3)))          # Expected: (5) - (3)
-print(Sub(X(), Int(2)))             # Expected: (X) - (2)
-print(Sub(Add(X(), Int(1)), Int(4)))# Expected: ((X) + (1)) - (4)
+poly1 = Mul(X(), Add(Int(1), Int(3)))
+print(poly1)  # Expected output: X * (1 + 3)
+print(poly1.evaluate(-2))  # Expected numerical output for X = -2
 
-print(Div(Int(10), Int(2)))         # Expected: (10) / (2)
-print(Div(X(), Int(5)))             # Expected: (X) / (5)
-print(Div(Mul(X(), Int(3)), X()))   # Expected: ((X) * (3)) / (X)
-
-
-print(Add(Div(X(), Int(2)), Sub(X(), Int(3)))) # Expected: ((X) / (2)) + ((X) - (3))
-
-test_poly = Add(X(), Int(3))
-print(test_poly.evaluate(2))  # Expected output: 5 (since X is 2 and 2 + 3 = 5)
-
-test_poly = Mul(Div(X(), Int(2)), Sub(X(), Int(1)))
-print(test_poly.evaluate(4))  # Expected output for (X/2) * (X-1) with X=4
