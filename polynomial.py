@@ -5,7 +5,8 @@ class X:
     def __repr__(self):
         return "X"
 
-
+    def evaluate(self, val):
+        return val
 class Int:
     def __init__(self, i):
         self.i = i
@@ -13,6 +14,8 @@ class Int:
     def __repr__(self):
         return str(self.i)
 
+     def evaluate(self, val):
+        return self.i
 
 class Add:
     def __init__(self, p1, p2):
@@ -66,3 +69,9 @@ print(Div(Mul(X(), Int(3)), X()))   # Expected: ((X) * (3)) / (X)
 
 
 print(Add(Div(X(), Int(2)), Sub(X(), Int(3)))) # Expected: ((X) / (2)) + ((X) - (3))
+
+test_poly = Add(X(), Int(3))
+print(test_poly.evaluate(2))  # Expected output: 5 (since X is 2 and 2 + 3 = 5)
+
+test_poly = Mul(Div(X(), Int(2)), Sub(X(), Int(1)))
+print(test_poly.evaluate(4))  # Expected output for (X/2) * (X-1) with X=4
